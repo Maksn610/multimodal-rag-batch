@@ -3,6 +3,8 @@ from playwright.sync_api import Page
 from utils.text_utils import html_to_markdown_text
 from utils.image_downloader import download_and_store_image
 
+IGNORED_TAGS = {"script", "style", "meta", "link", "head"}
+
 
 def extract_articles(page: Page, issue_number: int) -> list:
     article_locator = page.locator("article").first
@@ -19,6 +21,12 @@ def extract_articles(page: Page, issue_number: int) -> list:
 
     for element in all_elements:
         tag = element.evaluate("el => el.tagName.toLowerCase()")
+        if current_article is None and tag not in IGNORED_TAGS:
+            current_article = {
+                "title": "Introductory Section",
+                "text_blocks": [],
+                "section_title": None
+            }
 
         if tag == "h1":
             text = element.inner_text().strip()
@@ -40,6 +48,8 @@ def extract_articles(page: Page, issue_number: int) -> list:
 
         elif tag == "p" and current_article:
             html = element.inner_html()
+            if not html.strip():
+                continue
             markdown = html_to_markdown_text(html)
             if markdown:
                 current_article["text_blocks"].append({
@@ -51,13 +61,21 @@ def extract_articles(page: Page, issue_number: int) -> list:
             raw_src = element.get_attribute("src")
             if not raw_src:
                 continue
+
             image_data = download_and_store_image(raw_src, issue_number, image_subdir)
-            if image_data:
+            if image_data is not None:
                 current_article["text_blocks"].append({
                     "type": "image",
                     "url": image_data["url"],
                     "local_path": image_data["local_path"]
                 })
+
+                alt = element.get_attribute("alt")
+                if alt:
+                    current_article["text_blocks"].append({
+                        "type": "alt_text",
+                        "text": alt.strip()
+                    })
 
     if current_article and current_article["text_blocks"]:
         current_article["position"] = article_counter
