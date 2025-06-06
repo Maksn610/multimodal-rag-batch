@@ -135,6 +135,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+src/testing
+.idea
 
 # Spyder project settings
 .spyderproject
@@ -188,7 +190,7 @@ cython_debug/
 
 # Cursor
 #  Cursor is an AI-powered code editor. `.cursorignore` specifies files/directories to
-#  exclude from AI features like autocomplete and code analysis. Recommended for sensitive data
+#  exclude from AI features like autocomplete and code analysis. Recommended for sensitive testing
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
