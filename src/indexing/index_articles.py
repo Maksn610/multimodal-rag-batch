@@ -2,7 +2,8 @@ import json
 from pathlib import Path
 from tqdm import tqdm
 from indexing.embedding.embedding_client import get_embedding
-from indexing.vector_db.index_utils import build_faiss_index,save_index,save_metadata
+from indexing.faiss_backend.index_utils import build_faiss_index, save_index, save_metadata
+from utils.io_utils import convert_to_jsonl, load_articles
 
 # === CONFIG ===
 RAW_JSON_PATH = Path("../../data/issue_290.json")
@@ -11,21 +12,6 @@ INDEX_OUTPUT_PATH = Path("storage/faiss/index_flat_L2.index")
 METADATA_OUTPUT_PATH = Path("storage/faiss/metadata.jsonl")
 DIM = 1536
 TOP_K = 3
-
-
-def convert_to_jsonl(raw_path: Path, out_path: Path) -> None:
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    with raw_path.open("r", encoding="utf-8") as f:
-        raw = json.load(f)
-    with out_path.open("w", encoding="utf-8") as f:
-        for article in raw["articles"]:
-            f.write(json.dumps(article, ensure_ascii=False) + "\n")
-    print(f"[INFO] Converted {len(raw['articles'])} articles to JSONL → {out_path}")
-
-
-def load_articles(path: Path):
-    with path.open("r", encoding="utf-8") as f:
-        return [json.loads(line) for line in f]
 
 
 def prepare_text(article) -> str:
