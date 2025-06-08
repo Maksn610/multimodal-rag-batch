@@ -1,7 +1,10 @@
 import os
+import logging
 import requests
 from urllib.parse import urljoin, urlparse, unquote
-from .url_utils import clean_url
+from src.utils.url_utils import clean_url
+
+logger = logging.getLogger(__name__)
 
 
 def download_and_store_image(raw_src: str, issue_number: int, image_subdir: str) -> dict | None:
@@ -31,8 +34,8 @@ def download_and_store_image(raw_src: str, issue_number: int, image_subdir: str)
                 "local_path": os.path.relpath(local_path, "data").replace("\\", "/")
             }
 
-        print(f"Image download failed (status {response.status_code}): {full_url}")
+        logger.warning(f"Image download failed (status {response.status_code}): {full_url}")
 
-    except Exception:
-        print(f"Image download failed: {raw_src}")
+    except Exception as e:
+        logger.warning(f"Image download failed: {raw_src} ({e})")
     return None
