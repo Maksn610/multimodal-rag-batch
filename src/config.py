@@ -15,6 +15,7 @@ END_ISSUE = 285
 # =======================
 EMBED_MODEL = "text-embedding-3-small"
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+EMBED_CACHE_PATH = Path("storage/faiss/embedding_cache.jsonl")
 
 # =======================
 # 📂 Data paths

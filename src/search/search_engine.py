@@ -4,6 +4,7 @@ import numpy as np
 import faiss
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Union
+
 from src.embedding.embedding_client import get_embedding
 from src.indexing.schema import ArticleMeta
 from src.config import INDEX_OUTPUT_PATH, METADATA_OUTPUT_PATH, TOP_K, SCORE_THRESHOLD
@@ -23,11 +24,11 @@ def load_metadata(metadata_path: Path) -> List[Union[Dict[str, Any], ArticleMeta
 
 
 def search(
-        query: str,
-        index: faiss.Index,
-        metadata: List[Union[Dict[str, Any], ArticleMeta]],
-        top_k: int = TOP_K,
-        score_threshold: Optional[float] = SCORE_THRESHOLD
+    query: str,
+    index: faiss.Index,
+    metadata: List[Union[Dict[str, Any], ArticleMeta]],
+    top_k: int = TOP_K,
+    score_threshold: Optional[float] = SCORE_THRESHOLD
 ) -> List[Dict[str, Any]]:
     query_embedding = get_embedding(query)
     distances, indices = index.search(np.array([query_embedding]), top_k)
@@ -55,23 +56,7 @@ def pretty_print_results(results: List[Dict[str, Any]]) -> None:
         print("-" * 80)
 
 
-def search_to_json(query: str, top_k: int = TOP_K, score_threshold: Optional[float] = SCORE_THRESHOLD) -> List[
-    Dict[str, Any]]:
+def search_to_json(query: str, top_k: int = TOP_K, score_threshold: Optional[float] = SCORE_THRESHOLD) -> List[Dict[str, Any]]:
     index = load_index(INDEX_OUTPUT_PATH)
     metadata = load_metadata(METADATA_OUTPUT_PATH)
     return search(query, index, metadata, top_k, score_threshold)
-
-
-def run_search():
-    import logging
-    logging.basicConfig(level=logging.INFO)
-
-    query = input("🔍 Enter your search query: ")
-    index = load_index(INDEX_OUTPUT_PATH)
-    metadata = load_metadata(METADATA_OUTPUT_PATH)
-    results = search(query, index, metadata, top_k=TOP_K, score_threshold=SCORE_THRESHOLD)
-    pretty_print_results(results)
-
-
-if __name__ == "__main__":
-    run_search()
