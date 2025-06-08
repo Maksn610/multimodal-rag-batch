@@ -5,16 +5,11 @@ from pathlib import Path
 from src.embedding.embedding_client import get_embedding
 from src.indexing.index_utils import build_faiss_index, save_index, save_metadata
 from src.utils.io_utils import convert_to_jsonl, load_articles
+from src.utils.text_formatter import prepare_text
 from src.indexing.schema import ArticleMeta
 from src.config import RAW_DIR, JSONL_DIR, INDEX_OUTPUT_PATH, METADATA_OUTPUT_PATH, DIM
 
 logger = logging.getLogger(__name__)
-
-
-def prepare_text(article: dict) -> str:
-    text_blocks = " ".join([tb["text"] for tb in article["text_blocks"] if tb["type"] == "text"])
-    alt_texts = " ".join([tb["text"] for tb in article["text_blocks"] if tb["type"] == "alt_text"])
-    return f"{article['title']}\n\n{text_blocks}\n\n{alt_texts}"
 
 
 def run_embedding_pipeline() -> None:

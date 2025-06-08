@@ -36,5 +36,5 @@ def get_embedding(text: str, retries: int = 3, timeout: int = 10) -> np.ndarray:
             logger.warning(f"Attempt {attempt + 1} failed: {e}. Retrying in {wait_time} seconds...")
             time.sleep(wait_time)
 
-    logger.error(f"Failed to get embedding after {retries} attempts.")
+    logger.exception(f"Failed to get embedding after {retries} attempts.")
     raise RuntimeError(f"Failed to get embedding after {retries} attempts.")

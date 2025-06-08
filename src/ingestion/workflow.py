@@ -52,6 +52,6 @@ def run_ingestion() -> None:
             except TimeoutError:
                 logger.warning(f"Issue {issue_number} failed to load (timeout).")
             except Exception as e:
-                logger.error(f"Error with issue {issue_number}: {e}")
+                logger.exception(f"Unexpected error with issue {issue_number}: {e}")
 
         browser.close()
