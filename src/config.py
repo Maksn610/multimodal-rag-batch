@@ -5,6 +5,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # =======================
+# 📌 Base path
+# =======================
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+# =======================
 # ⚙️ Ingestion settings
 # =======================
 START_ISSUE = 290
@@ -15,12 +20,12 @@ END_ISSUE = 285
 # =======================
 EMBED_MODEL = "text-embedding-3-small"
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-EMBED_CACHE_PATH = Path("storage/faiss/embedding_cache.jsonl")
+EMBED_CACHE_PATH = PROJECT_ROOT / "storage/faiss/embedding_cache.jsonl"
 
 # =======================
 # 📂 Data paths
 # =======================
-RAW_DIR = Path("data")
+RAW_DIR = PROJECT_ROOT / "data"
 IMAGES_DIR = RAW_DIR / "images"
 JSONL_DIR = RAW_DIR / "jsonl"
 
@@ -31,7 +36,6 @@ DIM = 1536
 TOP_K = 3
 SCORE_THRESHOLD = None
 
-# Index settings
-INDEX_NAME = "index_flat_L2.index"  # You can change to: index_ivf_L2.index, index_hnsw_L2.index, etc.
-INDEX_OUTPUT_PATH = Path("storage/faiss") / INDEX_NAME
-METADATA_OUTPUT_PATH = Path("storage/faiss/metadata.jsonl")
+INDEX_NAME = "index_flat_L2.index"
+INDEX_OUTPUT_PATH = PROJECT_ROOT / "storage/faiss" / INDEX_NAME
+METADATA_OUTPUT_PATH = PROJECT_ROOT / "storage/faiss/metadata.jsonl"
