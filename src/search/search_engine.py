@@ -13,8 +13,9 @@ logger = logging.getLogger(__name__)
 
 
 def load_index(index_path: Path) -> faiss.Index:
-    logger.info(f"Loading FAISS index from {index_path}")
-    return faiss.read_index(str(index_path))
+    logger.info(f"Loading FAISS index from {index_path.resolve()}")
+    return faiss.read_index(str(index_path.resolve()))
+
 
 
 def load_metadata(metadata_path: Path) -> List[Union[Dict[str, Any], ArticleMeta]]:
