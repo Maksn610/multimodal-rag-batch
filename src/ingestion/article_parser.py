@@ -1,8 +1,10 @@
 import os
+import logging
 from playwright.sync_api import Page
-from utils.text_utils import html_to_markdown_text
-from utils.image_downloader import download_and_store_image
+from src.utils.text_utils import html_to_markdown_text
+from src.ingestion.image_downloader import download_and_store_image
 
+logger = logging.getLogger(__name__)
 IGNORED_TAGS = {"script", "style", "meta", "link", "head"}
 
 
@@ -81,4 +83,5 @@ def extract_articles(page: Page, issue_number: int) -> list:
         current_article["position"] = article_counter
         articles.append(current_article)
 
+    logger.info(f"Extracted {len(articles)} articles from issue {issue_number}")
     return articles

@@ -1,22 +1,23 @@
 import json
+import logging
 import numpy as np
 import faiss
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Union
-from indexing.embedding.embedding_client import get_embedding
-from indexing.faiss_backend.schema import ArticleMeta
+from src.embedding.embedding_client import get_embedding
+from src.indexing.schema import ArticleMeta
+from src.config import INDEX_OUTPUT_PATH, METADATA_OUTPUT_PATH, TOP_K, SCORE_THRESHOLD
 
-INDEX_PATH = Path("storage/faiss/index_flat_L2.index")
-METADATA_PATH = Path("storage/faiss/metadata.jsonl")
-TOP_K = 3
-SCORE_THRESHOLD = None
+logger = logging.getLogger(__name__)
 
 
 def load_index(index_path: Path) -> faiss.Index:
+    logger.info(f"Loading FAISS index from {index_path}")
     return faiss.read_index(str(index_path))
 
 
 def load_metadata(metadata_path: Path) -> List[Union[Dict[str, Any], ArticleMeta]]:
+    logger.info(f"Loading metadata from {metadata_path}")
     with metadata_path.open("r", encoding="utf-8") as f:
         return [json.loads(line) for line in f]
 
@@ -39,6 +40,7 @@ def search(
         result["score"] = float(dist)
         results.append(result)
 
+    logger.info(f"Found {len(results)} relevant results for query: '{query}'")
     return results
 
 
@@ -53,16 +55,20 @@ def pretty_print_results(results: List[Dict[str, Any]]) -> None:
         print("-" * 80)
 
 
-def search_to_json(query: str, top_k: int = TOP_K, score_threshold: Optional[float] = SCORE_THRESHOLD) -> List[Dict[str, Any]]:
-    index = load_index(INDEX_PATH)
-    metadata = load_metadata(METADATA_PATH)
+def search_to_json(query: str, top_k: int = TOP_K, score_threshold: Optional[float] = SCORE_THRESHOLD) -> List[
+    Dict[str, Any]]:
+    index = load_index(INDEX_OUTPUT_PATH)
+    metadata = load_metadata(METADATA_OUTPUT_PATH)
     return search(query, index, metadata, top_k, score_threshold)
 
 
 def run_search():
+    import logging
+    logging.basicConfig(level=logging.INFO)
+
     query = input("🔍 Enter your search query: ")
-    index = load_index(INDEX_PATH)
-    metadata = load_metadata(METADATA_PATH)
+    index = load_index(INDEX_OUTPUT_PATH)
+    metadata = load_metadata(METADATA_OUTPUT_PATH)
     results = search(query, index, metadata, top_k=TOP_K, score_threshold=SCORE_THRESHOLD)
     pretty_print_results(results)
 

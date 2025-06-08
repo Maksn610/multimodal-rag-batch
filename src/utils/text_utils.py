@@ -1,6 +1,6 @@
 import re
 from bs4 import BeautifulSoup
-from .url_utils import clean_url
+from src.utils.url_utils import clean_url
 
 
 def normalize_text(text: str) -> str:

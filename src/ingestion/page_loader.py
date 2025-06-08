@@ -1,33 +1,33 @@
 import re
-from playwright.sync_api import Page
-from typing import Optional
+import logging
 from datetime import datetime
+from typing import Optional
+from playwright.sync_api import Page
+
+logger = logging.getLogger(__name__)
 
 
 def load_issue_page(page: Page, url: str) -> bool:
     page.goto(url, timeout=20000)
-    return "Page Not Found" not in page.title()
+    result = "Page Not Found" not in page.title()
+    logger.info(f"Loaded page {url}: {'OK' if result else 'NOT FOUND'}")
+    return result
 
 
 def extract_issue_date(page: Page) -> Optional[str]:
-    """
-    Extracts issue date in human-readable format (e.g. 'January 22, 2025').
-    """
     html = page.content()
 
-    # Try JSON-LD
     match = re.search(r'"datePublished"\s*:\s*"([^"]+)"', html)
     if match:
         try:
-            # Parse ISO and format
             dt = datetime.fromisoformat(match.group(1).replace("Z", "+00:00"))
-            return dt.strftime("%B %d, %Y")  # e.g., January 22, 2025
-        except Exception:
-            pass
+            return dt.strftime("%B %d, %Y")
+        except Exception as e:
+            logger.warning(f"Failed to parse JSON-LD date: {e}")
 
-    # Fallback: article:tag
     tag_match = re.search(r'<meta[^>]+property="article:tag"[^>]+content="(.*?)"', html)
     if tag_match and re.search(r'\d{4}', tag_match.group(1)):
         return tag_match.group(1)
 
+    logger.warning("Issue date not found")
     return None

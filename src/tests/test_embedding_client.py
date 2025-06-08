@@ -1,5 +1,5 @@
 import numpy as np
-from indexing.embedding.embedding_client import get_embedding
+from embedding.embedding_client import get_embedding
 
 def test_embedding_output_shape():
     text = "Test query for embedding"

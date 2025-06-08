@@ -1,5 +1,5 @@
-from indexing.searcher import search, load_index, load_metadata
-from indexing.config import INDEX_OUTPUT_PATH, METADATA_OUTPUT_PATH
+from search.search_engine import search, load_index, load_metadata
+from config import INDEX_OUTPUT_PATH, METADATA_OUTPUT_PATH
 
 def test_search_returns_valid_results():
     index = load_index(INDEX_OUTPUT_PATH)
