@@ -43,10 +43,9 @@ def run_embedding_pipeline() -> None:
             convert_to_jsonl(json_path, jsonl_path)
 
         logger.info(f"Loading articles from {jsonl_path}")
-        issue_id = json_path.stem  # e.g. "issue_285"
+        issue_id = json_path.stem
         articles = load_articles(jsonl_path)
 
-        # Inject issue_id into each article
         for article in articles:
             article["issue_id"] = issue_id
             all_articles.append(article)
@@ -74,13 +73,18 @@ def run_embedding_pipeline() -> None:
             ]
         ))
 
-        # Append to cache
         EMBED_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
         with EMBED_CACHE_PATH.open("a", encoding="utf-8") as f:
             f.write(json.dumps({
                 "id": article_id,
                 "title": article["title"]
             }, ensure_ascii=False) + "\n")
+
+    unique_metadata = {}
+    for entry in metadata:
+        if entry.id not in unique_metadata:
+            unique_metadata[entry.id] = entry
+    metadata = list(unique_metadata.values())
 
     if vectors:
         index = build_faiss_index(vectors, dim=DIM)
