@@ -27,7 +27,8 @@ def extract_articles(page: Page, issue_number: int) -> list:
             current_article = {
                 "title": "Introductory Section",
                 "text_blocks": [],
-                "section_title": None
+                "section_title": None,
+                "issue_number": issue_number
             }
 
         if tag == "h1":
@@ -40,12 +41,14 @@ def extract_articles(page: Page, issue_number: int) -> list:
                 continue
             if current_article and current_article["text_blocks"]:
                 current_article["position"] = article_counter
+                current_article["issue_number"] = issue_number
                 articles.append(current_article)
                 article_counter += 1
             current_article = {
                 "title": text,
                 "text_blocks": [],
-                "section_title": current_section
+                "section_title": current_section,
+                "issue_number": issue_number
             }
 
         elif tag == "p" and current_article:
@@ -63,7 +66,6 @@ def extract_articles(page: Page, issue_number: int) -> list:
             raw_src = element.get_attribute("src")
             if not raw_src:
                 continue
-
             image_data = download_and_store_image(raw_src, issue_number, image_subdir)
             if image_data is not None:
                 current_article["text_blocks"].append({
@@ -71,7 +73,6 @@ def extract_articles(page: Page, issue_number: int) -> list:
                     "url": image_data["url"],
                     "local_path": image_data["local_path"]
                 })
-
                 alt = element.get_attribute("alt")
                 if alt:
                     current_article["text_blocks"].append({
@@ -81,6 +82,7 @@ def extract_articles(page: Page, issue_number: int) -> list:
 
     if current_article and current_article["text_blocks"]:
         current_article["position"] = article_counter
+        current_article["issue_number"] = issue_number
         articles.append(current_article)
 
     logger.info(f"Extracted {len(articles)} articles from issue {issue_number}")
