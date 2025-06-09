@@ -7,4 +7,5 @@ class ArticleMeta:
     id: int
     title: str
     text_snippet: str
+    full_text: str
     local_image_paths: List[str]

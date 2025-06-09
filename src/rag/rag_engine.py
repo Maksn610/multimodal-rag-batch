@@ -1,52 +1,46 @@
 import logging
-from typing import Dict, List
+from typing import Dict
+from pathlib import Path
 
-from src.rag.llm_client import call_llm
-from src.rag.prompt_utils import build_prompt
+from src.rag.llm_client import call_llm_multimodal
 from src.search.search_engine import search_to_json
 
 logger = logging.getLogger(__name__)
-MAX_RESULTS = 3  # Limit for retrieved articles
+MAX_RESULTS = 3
 
 
-def answer_query(user_query: str) -> Dict:
+def answer_query_multimodal(user_query: str) -> Dict:
     """
-    Handles the full RAG pipeline: search → prompt → LLM → return.
-
-    Args:
-        user_query (str): Input question from user.
-
-    Returns:
-        Dict: {
-            "answer": LLM response,
-            "articles": list of matched articles with metadata
-        }
+    Executes the full RAG pipeline using multimodal context (text + images + alt-texts).
     """
     logger.info("Running semantic search...")
     retrieved = search_to_json(user_query)
     if not retrieved:
-        logger.warning("No articles retrieved.")
+        logger.warning("No relevant articles found.")
         return {
-            "answer": "Sorry, I couldn't find relevant articles.",
+            "answer": "Sorry, I couldn't find any relevant articles.",
             "articles": []
         }
 
-    retrieved = retrieved[:MAX_RESULTS]
+    top_article = retrieved[0]
 
-    logger.info("Building prompt...")
-    prompt = build_prompt(user_query, retrieved)
+    text = top_article.get("full_text", "")
+    image_paths = [
+        str(Path("data") / p) for p in top_article.get("local_image_paths", [])
+    ]
+    alt_texts = top_article.get("alt_texts", [])
 
-    logger.info("Calling LLM...")
+    logger.info("Calling LLM with multimodal context (text + images + alt-texts)...")
     try:
-        response = call_llm(prompt)
+        response = call_llm_multimodal(text, image_paths, alt_texts)
     except Exception as e:
-        logger.exception("LLM call failed")
+        logger.exception("Multimodal call failed")
         return {
-            "answer": "Sorry, something went wrong while generating a response.",
+            "answer": "Error: unable to generate an answer.",
             "articles": retrieved
         }
 
     return {
         "answer": response,
-        "articles": retrieved
+        "articles": retrieved[:MAX_RESULTS]
     }

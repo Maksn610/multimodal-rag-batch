@@ -68,6 +68,7 @@ def run_embedding_pipeline() -> None:
             id=article_id,
             title=article["title"],
             text_snippet=text[:300],
+            full_text=text,
             local_image_paths=[
                 b["local_path"] for b in article["text_blocks"] if b["type"] == "image"
             ]
