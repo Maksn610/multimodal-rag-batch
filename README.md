@@ -172,6 +172,7 @@ Test files include:
 To run all tests:
 
 ```bash
+cd src
 pytest tests/
 ```
 
