@@ -48,22 +48,46 @@ pip install -r requirements.txt
 
 ### 3. Configure Environment
 
-The project uses a `.env` file and a centralized `config.py` to manage both secrets and runtime parameters.
+The project uses a `.env` file along with centralized logic in `config.py` to manage sensitive credentials and runtime parameters.
 
-Create a `.env` file in the root directory with:
+#### 🧾 Example `.env` Content
+
+Create a `.env` file in the root directory with the following keys:
 
 ```
 OPENAI_API_KEY=your-api-key
 LLM_MODEL=gpt-4o
 ```
 
-These will be automatically loaded by `llm_client.py` and `config.py`.
+These values will be automatically loaded by both `llm_client.py` and `config.py`.
 
-You can also configure system behavior directly in `config.py`, including:
+#### ⚙️ System Behavior Configuration
+
+You can adjust system behavior directly in `config.py`, including:
+
 - the catalog number range of newsletters to ingest (`START_ISSUE`, `END_ISSUE`)
-- which embedding model to use and the vector dimensionality
-- parameters for FAISS search (`TOP_K`, `SCORE_THRESHOLD`)
-- local paths for storing raw data, images, indexes, and metadata
+- which embedding model to use (`EMBED_MODEL`) and the vector dimensionality (`DIM`)
+- search parameters for FAISS (`TOP_K`, `SCORE_THRESHOLD`)
+- paths for raw data, images, vector index, and metadata
+
+#### 📁 Using `.env.example` (Optional)
+
+If your project includes an `.env.example` file, you can create your actual `.env` file with:
+
+- **On macOS/Linux**:
+```bash
+cp .env.example .env
+```
+
+- **On Windows (CMD)**:
+```cmd
+copy .env.example .env
+```
+
+- **On Windows (PowerShell)**:
+```powershell
+Copy-Item .env.example .env
+```
 
 ### 4. Run the Full Pipeline
 
@@ -134,9 +158,23 @@ This context is bundled into a structured payload and passed to OpenAI’s API u
 
 ---
 
-## 📜 License
+## 🧪 Testing
 
-MIT — free to use, adapt, and extend.
+The project includes both unit and integration tests to validate core components.
+
+Test files include:
+- `test_builder.py` – tests embedding and indexing pipeline
+- `test_embedding_client.py` – validates OpenAI embedding logic with retries
+- `test_rag_engine.py` – integration test for the full multimodal RAG flow
+- `test_searcher.py` – verifies semantic search results from FAISS
+- `test_text_formatter.py` – ensures consistent preprocessing of article text
+
+To run all tests:
+
+```bash
+pytest tests/
+```
+
 
 ## 🧭 High-Level Architecture
 
@@ -179,23 +217,6 @@ A demo walkthrough video is available to showcase:
 - Seeing the LLM response with image references
 
 👉 [Link to demo video](https://youtu.be/gUf4l2qFxvo)
-
-## 🧪 Testing
-
-The project includes both unit and integration tests to validate core components.
-
-Test files include:
-- `test_builder.py` – tests embedding and indexing pipeline
-- `test_embedding_client.py` – validates OpenAI embedding logic with retries
-- `test_rag_engine.py` – integration test for the full multimodal RAG flow
-- `test_searcher.py` – verifies semantic search results from FAISS
-- `test_text_formatter.py` – ensures consistent preprocessing of article text
-
-To run all tests:
-
-```bash
-pytest tests/
-```
 
 ## 📜 License
 
