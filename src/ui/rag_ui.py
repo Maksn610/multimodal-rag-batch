@@ -1,3 +1,12 @@
+import sys
+from pathlib import Path
+
+current_path = Path(__file__).resolve()
+for parent in current_path.parents:
+    if (parent / "src").exists():
+        sys.path.append(str(parent))
+        break
+
 import streamlit as st
 from src.rag.rag_engine import answer_query_multimodal
 from src.rag.llm_client import last_payload  # Assuming this is available for debug if needed
