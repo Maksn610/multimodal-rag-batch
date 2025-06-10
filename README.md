@@ -37,7 +37,7 @@ This project implements the full RAG pipeline:
 
 ```bash
 git clone https://github.com/Maksn610/multimodal-rag-batch.git
-cd multimodal-rag-the-batch
+cd multimodal-rag-batch
 ```
 
 ### 2. Install Dependencies
