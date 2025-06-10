@@ -180,6 +180,23 @@ A demo walkthrough video is available to showcase:
 
 👉 [Link to demo video](https://youtu.be/gUf4l2qFxvo)
 
+## 🧪 Testing
+
+The project includes both unit and integration tests to validate core components.
+
+Test files include:
+- `test_builder.py` – tests embedding and indexing pipeline
+- `test_embedding_client.py` – validates OpenAI embedding logic with retries
+- `test_rag_engine.py` – integration test for the full multimodal RAG flow
+- `test_searcher.py` – verifies semantic search results from FAISS
+- `test_text_formatter.py` – ensures consistent preprocessing of article text
+
+To run all tests:
+
+```bash
+pytest tests/
+```
+
 ## 📜 License
 
 This project is licensed under the MIT License.

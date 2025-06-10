@@ -1,12 +1,13 @@
 import logging
 import subprocess
 from pathlib import Path
-import streamlit as st
-
 from src.ingestion.workflow import run_ingestion
 from src.embedding.builder import run_embedding_pipeline
+import subprocess
 
+subprocess.run(["playwright", "install"], check=True)
 logger = logging.getLogger(__name__)
+
 
 def main():
     logging.basicConfig(level=logging.INFO)
@@ -26,6 +27,7 @@ def main():
         subprocess.run(["streamlit", "run", str(ui_path.resolve())], check=True)
     except subprocess.CalledProcessError as e:
         logger.error(f"Failed to launch Streamlit: {e}")
+
 
 if __name__ == "__main__":
     main()
