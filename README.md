@@ -36,7 +36,7 @@ This project implements the full RAG pipeline:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/Maksn610/multimodal-rag-the-batch.git
+git clone https://github.com/Maksn610/multimodal-rag-batch.git
 cd multimodal-rag-the-batch
 ```
 
