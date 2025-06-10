@@ -133,6 +133,8 @@ celerybeat.pid
 env/
 venv/
 ENV/
+data
+storage
 env.bak/
 venv.bak/
 testing

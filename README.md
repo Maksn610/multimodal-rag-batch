@@ -1,12 +1,16 @@
 # 🧠 Multimodal RAG on The Batch
 
-**Multimodal RAG on The Batch** is a fully functional Retrieval-Augmented Generation (RAG) system that integrates both text and visual content from [The Batch](https://www.deeplearning.ai/the-batch/) newsletters by DeepLearning.AI. The system allows users to ask natural language questions and receive grounded, evidence-based answers derived from article text and images.
+**Multimodal RAG on The Batch** is a fully functional Retrieval-Augmented Generation (RAG) system that integrates both
+text and visual content from [The Batch](https://www.deeplearning.ai/the-batch/) newsletters by DeepLearning.AI. The
+system allows users to ask natural language questions and receive grounded, evidence-based answers derived from article
+text and images.
 
 ---
 
 ## 💡 System Overview
 
 This project implements the full RAG pipeline:
+
 ```
 1. Ingestion      – Scraping and parsing The Batch HTML issues
 2. Preprocessing  – Extracting text blocks, alt-texts, and downloading images
@@ -48,7 +52,8 @@ pip install -r requirements.txt
 
 ### 3. Configure Environment
 
-The project uses a `.env` file along with centralized logic in `config.py` to manage sensitive credentials and runtime parameters.
+The project uses a `.env` file along with centralized logic in `config.py` to manage sensitive credentials and runtime
+parameters.
 
 #### 🧾 Example `.env` Content
 
@@ -75,16 +80,19 @@ You can adjust system behavior directly in `config.py`, including:
 If your project includes an `.env.example` file, you can create your actual `.env` file with:
 
 - **On macOS/Linux**:
+
 ```bash
 cp .env.example .env
 ```
 
 - **On Windows (CMD)**:
+
 ```cmd
 copy .env.example .env
 ```
 
 - **On Windows (PowerShell)**:
+
 ```powershell
 Copy-Item .env.example .env
 ```
@@ -96,6 +104,7 @@ python app.py
 ```
 
 This will:
+
 - download and parse the latest issues of The Batch;
 - extract content and images;
 - generate embeddings and build the FAISS index;
@@ -107,6 +116,15 @@ Or, if you’ve already ingested and indexed the data:
 streamlit run src/ui/rag_ui.py
 ```
 
+### 5. Docker
+
+Build the image and run it:
+
+```bash
+docker build -t batch-rag .
+docker run --rm -p 8501:8501 --env-file .env batch-rag
+```
+
 ---
 
 ## 💬 Example Query
@@ -114,8 +132,10 @@ streamlit run src/ui/rag_ui.py
 **User:**  
 _“What are the recent advances in medical AI mentioned in The Batch?”_
 
-**Response:**  
-> In the article *“AI Boosts Cancer Detection”*, an FDA-cleared model is shown to outperform radiologists. In the accompanying image, we see a radiology scan with heatmap overlays highlighting likely tumors. The alt-text confirms that this is based on real clinical data.
+**Response:**
+> In the article *“AI Boosts Cancer Detection”*, an FDA-cleared model is shown to outperform radiologists. In the
+> accompanying image, we see a radiology scan with heatmap overlays highlighting likely tumors. The alt-text confirms that
+> this is based on real clinical data.
 
 ---
 
@@ -142,11 +162,13 @@ _“What are the recent advances in medical AI mentioned in The Batch?”_
 ## 🔬 How Multimodal Context Works
 
 Each GPT-4o call receives:
+
 - the full article text
 - any `alt`-descriptions of images
 - the actual images (base64-encoded inline)
 
-This context is bundled into a structured payload and passed to OpenAI’s API using the `chat.completions.create(...)` method.
+This context is bundled into a structured payload and passed to OpenAI’s API using the `chat.completions.create(...)`
+method.
 
 ---
 
@@ -163,6 +185,7 @@ This context is bundled into a structured payload and passed to OpenAI’s API u
 The project includes both unit and integration tests to validate core components.
 
 Test files include:
+
 - `test_builder.py` – tests embedding and indexing pipeline
 - `test_embedding_client.py` – validates OpenAI embedding logic with retries
 - `test_rag_engine.py` – integration test for the full multimodal RAG flow
@@ -176,7 +199,6 @@ cd src
 pytest tests/
 ```
 
-
 ## 🧭 High-Level Architecture
 
 ```
@@ -188,6 +210,7 @@ User Query → Streamlit UI → Semantic Search (FAISS)
 ## 🖥️ User Interface
 
 The interface is implemented using Streamlit and provides:
+
 - A chat-like text input where users type questions.
 - The assistant's response rendered in markdown (with bold, lists, etc).
 - Inline image previews, when relevant.
@@ -201,18 +224,22 @@ This allows the embedding pipeline to skip previously processed content.
 ## 🧩 Extending the System
 
 To change the language model:
+
 - Modify the `call_llm_multimodal()` method in `llm_client.py`
 - Or change the `LLM_MODEL` value in `.env`
 
 To support multiple articles per query (instead of one):
+
 - Adjust `rag_engine.py` to pass more than one result to the LLM
 
 To switch embedding providers (e.g., Cohere, HuggingFace):
+
 - Replace `get_embedding()` in `embedding_client.py`
 
 ## 🎥 Demo Video
 
 A demo walkthrough video is available to showcase:
+
 - Launching the app
 - Asking a question
 - Seeing the LLM response with image references

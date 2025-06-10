@@ -1,0 +1,16 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.env
+.git
+.gitignore
+.storage
+venv
+ENV
+.env.*
+__pypackages__
+
+# Avoid shipping data and faiss indexes into the image
+/data
+/storage
